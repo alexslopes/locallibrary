@@ -22,3 +22,33 @@ def index(request):
         context={'num_books': num_books, 'num_instances': num_instances,
                  'num_instances_available': num_instances_available, 'num_authors': num_authors, 'num_genres': num_genres},
     )
+
+from django.views import generic
+
+class BookListView(generic.ListView):
+    model = Book
+    paginate_by = 10
+
+    """
+    def get_queryset(self):
+        return Book.objects.filter(title__icontains='war')[:5]  # Get 5 books containing the title war
+    """
+
+
+class BookDetailView(generic.DetailView):
+    model = Book
+
+
+class AuthorListView(generic.ListView):
+    """
+    Generic class-based list view for a list of authors.
+    """
+    model = Author
+    paginate_by = 10
+
+
+class AuthorDetailView(generic.DetailView):
+    """
+    Generic class-based detail view for an author.
+    """
+    model = Author
