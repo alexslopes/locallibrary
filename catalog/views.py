@@ -24,10 +24,13 @@ def index(request):
         request,
         'index.html',
         context={'num_books': num_books, 'num_instances': num_instances,
-                 'num_instances_available': num_instances_available, 'num_authors': num_authors, 'num_genres': num_genres, 'num_visits':num_visits}, # num_visits appended},
+                 'num_instances_available': num_instances_available, 'num_authors': num_authors,
+                 'num_genres': num_genres, 'num_visits': num_visits},  # num_visits appended},
     )
 
+
 from django.views import generic
+
 
 class BookListView(generic.ListView):
     model = Book
@@ -56,3 +59,18 @@ class AuthorDetailView(generic.DetailView):
     Generic class-based detail view for an author.
     """
     model = Author
+
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    """
+    Generic class-based view listing books on loan to current user.
+    """
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
