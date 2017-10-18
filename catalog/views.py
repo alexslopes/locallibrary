@@ -1,9 +1,10 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 from .models import Book, Author, BookInstance, Genre
 
-
+@login_required
 def index(request):
     """
     View function for home page of site.
@@ -75,13 +76,14 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
 
+
 class AllBorrowedBooksListView(LoginRequiredMixin, generic.ListView):
     model = BookInstance
-    template_name = 'catalog/'
+    template_name = 'catalog/all_borrowed_books.html'
     paginate_by = 10
 
     def get_queryset(self):
-        return BookInstance.object.filter(status='o');
+        return BookInstance.objects.filter(status='o');
 
 
 from django.contrib.auth.decorators import permission_required
